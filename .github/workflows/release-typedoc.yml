@@ -1,0 +1,60 @@
+# This is a basic workflow to help you get started with Actions
+
+name: TypeDoc
+permissions:
+  contents: write
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [master]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  typedoc:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 9
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      # Runs a set of commands using the runners shell
+      - name: clear output dir
+        run: rm ./docs/type/* -rf
+      - name: update .gitignore
+        run: sed -i -e '/\/docs\/type/d' .gitignore
+      - name: generate typedoc
+        run: pnpm typedoc
+      - name: Create new Branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git checkout -b typedoc
+          git add .
+          git commit -m "auto generate" --author="${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>" -n
+          git push -f origin typedoc

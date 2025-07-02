@@ -1,0 +1,9 @@
+/.idea
+/*.iml
+/node_modules
+/dist
+.DS_Store
+/docs/type
+.reg
+test-results
+.husky
