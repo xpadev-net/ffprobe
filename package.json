@@ -27,7 +27,10 @@
   "bugs": {
     "url": "https://github.com/xpadev-net/npm-package-template/issues"
   },
-  "files": ["dist/bundle.js", "dist/bundle.d.ts"],
+  "files": [
+    "dist/bundle.js",
+    "dist/bundle.d.ts"
+  ],
   "homepage": "https://xpadev-net.github.io/npm-package-template/",
   "license": "MIT",
   "devDependencies": {
@@ -49,9 +52,16 @@
     "tslib": "^2.8.1",
     "typedoc": "^0.26.11",
     "typedoc-plugin-missing-exports": "^3.1.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
+    "zod": "^3.25.69"
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }
