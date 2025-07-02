@@ -35,7 +35,9 @@ export const ffprobe = async (filePath: string): Promise<FfprobeOutput> => {
         } catch (parseError) {
           if (parseError instanceof SyntaxError) {
             reject(
-              new Error(`Failed to parse ffprobe output: ${parseError.message}`)
+              new Error(
+                `Failed to parse ffprobe output: ${parseError.message}`,
+              ),
             );
           } else {
             reject(parseError);
