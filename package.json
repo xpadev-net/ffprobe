@@ -16,6 +16,7 @@
     "format:fix": "biome format --write src",
     "lint": "biome check src",
     "lint:fix": "biome check --write --unsafe src",
+    "test": "vitest run --reporter=default --reporter=verbose",
     "prepare": "lefthook install"
   },
   "repository": {
