@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { type FfprobeOutput, FfprobeOutputSchema } from "./ffprobeSchema";
+import { type FfprobeOutput, FfprobeOutputSchema } from "./schema/ffprobe";
 
 export const ffprobe = async (filePath: string): Promise<FfprobeOutput> => {
   return new Promise((resolve, reject) => {
