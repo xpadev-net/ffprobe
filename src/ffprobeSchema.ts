@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-// codec_typeのenum化
-export const CodecTypeEnum = z.enum(["video", "audio"]);
-
 export const FfprobeStreamTagsSchema = z
   .object({
     language: z.string().optional(),
@@ -183,7 +180,7 @@ export const FfprobeStreamSchema = z.discriminatedUnion("codec_type", [
 
 export const FfprobeFormatTagsSchema = z.record(z.string(), z.string());
 
-const FfprobeFormatSchemaBase = z
+export const FfprobeFormatSchema = z
   .object({
     filename: z.string(),
     nb_streams: z.number(),
@@ -194,25 +191,11 @@ const FfprobeFormatSchemaBase = z
     size: z.string(),
     probe_score: z.number(),
     tags: FfprobeFormatTagsSchema.optional(),
+    start_time: z.string().optional(),
+    duration: z.string().optional(),
+    bit_rate: z.string().optional(),
   })
   .strict();
-
-const FfprobeFormatSchemaFull = FfprobeFormatSchemaBase.extend({
-  start_time: z.string(),
-  duration: z.string(),
-  bit_rate: z.string(),
-});
-
-const FfprobeFormatSchemaMinimal = FfprobeFormatSchemaBase.extend({
-  start_time: z.undefined().optional(),
-  duration: z.undefined().optional(),
-  bit_rate: z.undefined().optional(),
-});
-
-export const FfprobeFormatSchema = z.union([
-  FfprobeFormatSchemaFull,
-  FfprobeFormatSchemaMinimal,
-]);
 
 export const FfprobeOutputSchema = z
   .object({
