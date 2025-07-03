@@ -36,81 +36,76 @@ export const FfprobeStreamDispositionSchema = z
   })
   .strict();
 
-// video stream schema（必須項目のみ）
-export const FfprobeVideoStreamBaseSchema = z
+export const FfprobeVideoSideDataSchema = z
+  .object({
+    side_data_type: z.string(),
+    side_data_size: z.number().optional(),
+  })
+  .strict()
+  .catchall(z.any())
+  .strict();
+
+// 各ストリームに共通するベーススキーマ
+export const FfprobeBaseStreamSchema = z
   .object({
     index: z.number(),
-    codec_name: z.string(),
-    codec_long_name: z.string(),
-    profile: z.string(),
-    codec_type: z.literal("video"),
-    codec_tag: z.string(),
-    codec_tag_string: z.string(),
-    width: z.number(),
-    height: z.number(),
-    coded_width: z.number(),
-    coded_height: z.number(),
-    closed_captions: z.number(),
-    film_grain: z.number(),
-    has_b_frames: z.number(),
-    pix_fmt: z.string(),
-    level: z.number(),
-    chroma_location: z.string(),
-    disposition: FfprobeStreamDispositionSchema,
-    tags: FfprobeStreamTagsSchema,
-    // video固有の追加フィールド
-    field_order: z.string().optional(),
-    refs: z.number().optional(),
-    is_avc: z.string().optional(),
-    nal_length_size: z.string().optional(),
+    profile: z.string().optional(),
     id: z.string().optional(),
-    r_frame_rate: z.string().optional(),
-    avg_frame_rate: z.string().optional(),
-    time_base: z.string().optional(),
-    start_pts: z.number().optional(),
-    start_time: z.string().optional(),
+    codec_tag: z.string(),
+    codec_tag_string: z.string().optional(),
+    codec_name: z.string().optional(),
+    codec_long_name: z.string().optional(),
+    r_frame_rate: z.string(),
+    avg_frame_rate: z.string(),
+    time_base: z.string(),
+    start_pts: z.number(),
+    start_time: z.string(),
     duration_ts: z.number().optional(),
     duration: z.string().optional(),
     bit_rate: z.string().optional(),
-    bits_per_raw_sample: z.string().optional(),
     nb_frames: z.string().optional(),
+    disposition: FfprobeStreamDispositionSchema,
+    tags: FfprobeStreamTagsSchema.optional(),
     extradata_size: z.number().optional(),
+    ts_id: z.string().optional(),
+    ts_packetsize: z.union([z.number(), z.string()]).optional(),
   })
   .strict();
 
-export const FfprobeVideoStreamSchemaAllColor =
-  FfprobeVideoStreamBaseSchema.extend({
-    color_range: z.string(),
-    color_space: z.string(),
-    color_transfer: z.string(),
-    color_primaries: z.string(),
-  });
-
-export const FfprobeVideoStreamSchemaNoColor =
-  FfprobeVideoStreamBaseSchema.extend({
-    color_range: z.undefined().optional(),
-    color_space: z.undefined().optional(),
-    color_transfer: z.undefined().optional(),
-    color_primaries: z.undefined().optional(),
-  });
-
-export const FfprobeVideoStreamSchemaAspectRatio = z.object({
-  sample_aspect_ratio: z.string(),
-  display_aspect_ratio: z.string(),
-});
-
-export const FfprobeVideoStreamSchemaNoAspectRatio = z.object({
-  sample_aspect_ratio: z.undefined().optional(),
-  display_aspect_ratio: z.undefined().optional(),
-});
-
-export const FfprobeVideoStreamSchema = z.union([
-  z.union([FfprobeVideoStreamSchemaAllColor, FfprobeVideoStreamSchemaNoColor]),
-  z.union([
-    FfprobeVideoStreamSchemaAspectRatio,
-    FfprobeVideoStreamSchemaNoAspectRatio,
-  ]),
-]);
+export const FfprobeVideoStreamSchema = FfprobeBaseStreamSchema.extend({
+  codec_type: z.literal("video"),
+  width: z.number(),
+  height: z.number(),
+  coded_width: z.number().optional(),
+  coded_height: z.number().optional(),
+  closed_captions: z.number().optional(),
+  film_grain: z.number().optional(),
+  has_b_frames: z.number(),
+  pix_fmt: z.string().optional(),
+  level: z.number(),
+  chroma_location: z.string().optional(),
+  field_order: z.string().optional(),
+  refs: z.number().optional(),
+  is_avc: z.string().optional(),
+  nal_length_size: z.string().optional(),
+  id: z.string().optional(),
+  r_frame_rate: z.string().optional(),
+  avg_frame_rate: z.string().optional(),
+  time_base: z.string().optional(),
+  start_pts: z.number().optional(),
+  start_time: z.string().optional(),
+  bits_per_raw_sample: z.string().optional(),
+  color_range: z.string().optional(),
+  color_space: z.string().optional(),
+  color_transfer: z.string().optional(),
+  color_primaries: z.string().optional(),
+  sample_aspect_ratio: z.string().optional(),
+  display_aspect_ratio: z.string().optional(),
+  side_data_list: z.array(FfprobeVideoSideDataSchema).optional(),
+  tags: FfprobeStreamTagsSchema.optional(),
+  view_ids_available: z.string().optional(),
+  view_pos_available: z.string().optional(),
+}).strict();
 
 //ref: https://github.com/FFmpeg/FFmpeg/blob/11d1b71c311d1a1432a280e0e1ee7bc0ba91d671/libavutil/channel_layout.c#L184
 export const ZFfprobeAudioStreamChannelLayout = z.enum([
@@ -156,62 +151,34 @@ export const ZFfprobeAudioStreamChannelLayout = z.enum([
   "22.2",
 ]);
 
-export const FfprobeAudioStreamSchema = z
-  .object({
-    index: z.number(),
-    codec_name: z.string(),
-    codec_long_name: z.string(),
-    profile: z.string(),
-    codec_type: z.literal("audio"),
-    codec_tag: z.string(),
-    codec_tag_string: z.string(),
-    sample_fmt: z.string(),
-    sample_rate: z.string(),
-    channels: z.number(),
-    channel_layout: ZFfprobeAudioStreamChannelLayout,
-    bits_per_sample: z.number(),
-    initial_padding: z.number(),
-    id: z.string().optional(),
-    r_frame_rate: z.string(),
-    avg_frame_rate: z.string(),
-    time_base: z.string(),
-    start_pts: z.number(),
-    start_time: z.string(),
-    duration_ts: z.number().optional(),
-    duration: z.string().optional(),
-    bit_rate: z.string().optional(),
-    nb_frames: z.string().optional(),
-    extradata_size: z.number(),
-    disposition: FfprobeStreamDispositionSchema,
-    tags: FfprobeStreamTagsSchema,
-  })
-  .strict();
+export const FfprobeAudioStreamSchema = FfprobeBaseStreamSchema.extend({
+  codec_type: z.literal("audio"),
+  sample_fmt: z.string(),
+  sample_rate: z.string(),
+  channels: z.number(),
+  channel_layout: ZFfprobeAudioStreamChannelLayout,
+  bits_per_sample: z.number(),
+  initial_padding: z.number(),
+}).strict();
 
-export const FfprobeDataStreamSchema = z
-  .object({
-    index: z.number(),
-    codec_name: z.literal("data"),
-    codec_long_name: z.string(),
-    codec_tag: z.string(),
-    id: z.string(),
-    r_frame_rate: z.string(),
-    avg_frame_rate: z.string(),
-    time_base: z.string(),
-    start_pts: z.number(),
-    start_time: z.string(),
-    duration_ts: z.number().optional(),
-    duration: z.string().optional(),
-    bit_rate: z.string().optional(),
-    nb_frames: z.string().optional(),
-    disposition: FfprobeStreamDispositionSchema,
-    tags: FfprobeStreamTagsSchema,
-  })
-  .strict();
+export const FfprobeDataStreamSchema = FfprobeBaseStreamSchema.extend({
+  codec_type: z.literal("data"),
+}).strict();
 
-export const FfprobeStreamSchema = z.union([
+export const FfprobeSubtitleStreamSchema = FfprobeBaseStreamSchema.extend({
+  codec_type: z.literal("subtitle"),
+}).strict();
+
+export const FfprobeUnknownStreamSchema = FfprobeBaseStreamSchema.extend({
+  codec_type: z.undefined(),
+}).strict();
+
+export const FfprobeStreamSchema = z.discriminatedUnion("codec_type", [
   FfprobeVideoStreamSchema,
   FfprobeAudioStreamSchema,
   FfprobeDataStreamSchema,
+  FfprobeSubtitleStreamSchema,
+  FfprobeUnknownStreamSchema,
 ]);
 
 export const FfprobeFormatTagsSchema = z.record(z.string(), z.string());
@@ -259,7 +226,7 @@ export type FfprobeStreamDisposition = z.infer<
   typeof FfprobeStreamDispositionSchema
 >;
 export type FfprobeStream = z.infer<typeof FfprobeStreamSchema>;
-export type FfprobeVideoStream = z.infer<typeof FfprobeVideoStreamBaseSchema>;
+export type FfprobeVideoStream = z.infer<typeof FfprobeVideoStreamSchema>;
 export type FfprobeOutput = z.infer<typeof FfprobeOutputSchema>;
 export type FfprobeFormatTags = z.infer<typeof FfprobeFormatTagsSchema>;
 export type FfprobeFormat = z.infer<typeof FfprobeFormatSchema>;

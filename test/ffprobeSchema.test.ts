@@ -10,8 +10,12 @@ describe("FfprobeOutputSchema JSON parse test", () => {
   for (const file of files) {
     it(`parses ${file} without error and does not allow unknown keys`, () => {
       const json = JSON.parse(readFileSync(join(dir, file), "utf8"));
-      // strict: true で未知のキーを許容しない
-      expect(() => FfprobeOutputSchema.parse(json)).not.toThrow();
+      const result = FfprobeOutputSchema.safeParse(json);
+      if (!result.success) {
+        console.error(result.error);
+      }
+      expect(result.data).toMatchObject(json);
+      expect(result.success).toBe(true);
     });
   }
 });
