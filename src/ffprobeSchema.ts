@@ -112,6 +112,50 @@ export const FfprobeVideoStreamSchema = z.union([
   ]),
 ]);
 
+//ref: https://github.com/FFmpeg/FFmpeg/blob/11d1b71c311d1a1432a280e0e1ee7bc0ba91d671/libavutil/channel_layout.c#L184
+export const ZFfprobeAudioStreamChannelLayout = z.enum([
+  "mono",
+  "stereo",
+  "2.1",
+  "3.0",
+  "3.0(back)",
+  "4.0",
+  "quad",
+  "quad(side)",
+  "3.1",
+  "5.0",
+  "5.0(side)",
+  "4.1",
+  "5.1",
+  "5.1(side)",
+  "6.0",
+  "6.0(front)",
+  "3.1.2",
+  "hexagonal",
+  "6.1",
+  "6.1(back)",
+  "6.1(front)",
+  "7.0",
+  "7.0(front)",
+  "7.1",
+  "7.1(wide)",
+  "7.1(wide-side)",
+  "5.1.2",
+  "5.1.2(back)",
+  "octagonal",
+  "cube",
+  "5.1.4",
+  "7.1.2",
+  "7.1.4",
+  "7.2.3",
+  "9.1.4",
+  "9.1.6",
+  "hexadecagonal",
+  "binaural",
+  "downmix",
+  "22.2",
+]);
+
 export const FfprobeAudioStreamSchema = z
   .object({
     index: z.number(),
@@ -124,7 +168,7 @@ export const FfprobeAudioStreamSchema = z
     sample_fmt: z.string(),
     sample_rate: z.string(),
     channels: z.number(),
-    channel_layout: z.string(),
+    channel_layout: ZFfprobeAudioStreamChannelLayout,
     bits_per_sample: z.number(),
     initial_padding: z.number(),
     id: z.string().optional(),
@@ -143,9 +187,31 @@ export const FfprobeAudioStreamSchema = z
   })
   .strict();
 
+export const FfprobeDataStreamSchema = z
+  .object({
+    index: z.number(),
+    codec_name: z.literal("data"),
+    codec_long_name: z.string(),
+    codec_tag: z.string(),
+    id: z.string(),
+    r_frame_rate: z.string(),
+    avg_frame_rate: z.string(),
+    time_base: z.string(),
+    start_pts: z.number(),
+    start_time: z.string(),
+    duration_ts: z.number().optional(),
+    duration: z.string().optional(),
+    bit_rate: z.string().optional(),
+    nb_frames: z.string().optional(),
+    disposition: FfprobeStreamDispositionSchema,
+    tags: FfprobeStreamTagsSchema,
+  })
+  .strict();
+
 export const FfprobeStreamSchema = z.union([
   FfprobeVideoStreamSchema,
   FfprobeAudioStreamSchema,
+  FfprobeDataStreamSchema,
 ]);
 
 export const FfprobeFormatTagsSchema = z.record(z.string(), z.string());
