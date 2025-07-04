@@ -1,7 +1,7 @@
 {
-  "name": "@xpadev-net/npm-package-template",
+  "name": "@xpadev-net/ffprobe",
   "version": "0.0.0",
-  "description": "A template for npm packages with TypeScript, Rollup, and Biome.",
+  "description": "A library for working with FFprobe and media metadata.",
   "main": "dist/bundle.js",
   "types": "dist/bundle.d.ts",
   "scripts": {
