@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { FfprobeOutputSchema } from "../src/ffprobeSchema";
+import { FfprobeOutputSchema } from "../src/schema/ffprobe";
 import { describe, it, expect } from "vitest";
 
 describe("FfprobeOutputSchema JSON parse test", () => {
