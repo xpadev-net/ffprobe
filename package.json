@@ -1,6 +1,6 @@
 {
   "name": "@xpadev-net/npm-package-template",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "A template for npm packages with TypeScript, Rollup, and Biome.",
   "main": "dist/bundle.js",
   "types": "dist/bundle.d.ts",
