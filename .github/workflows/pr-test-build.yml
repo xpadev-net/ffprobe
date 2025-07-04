@@ -34,5 +34,5 @@ jobs:
         run: |
           pnpm install
 
-      - name: Building niconicomments
+      - name: Building package
         run: pnpm build
