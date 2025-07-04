@@ -3,7 +3,7 @@ import { typescriptPaths } from "rollup-plugin-typescript-paths";
 import { banner } from "./rollup.banner.mjs";
 
 export default {
-  input: "./dist/dts/main.d.ts",
+  input: "./dist/dts/index.d.ts",
   output: [
     {
       file: "dist/bundle.d.ts",
